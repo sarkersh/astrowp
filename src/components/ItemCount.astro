@@ -1,0 +1,26 @@
+---
+// Define your frontmatter data here
+//const itemCount = Astro.props.itemCount || '5';
+const contentType = Astro.props.contentType || 'Posts';
+const url = Astro.props.url || '/posts';
+---
+
+<div class="rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark md:p-6 xl:p-7.5">
+    <div class="flex items-end justify-between">
+        <div>
+            <h3 class="mb-4 text-title-lg font-bold text-black dark:text-white">
+               Manage {contentType}
+            </h3>
+            <p class="font-medium">(Edit, Preview, Delete)</p>
+            <span class="mt-2 flex items-center gap-2">
+            {/* Additional content can go here */}
+      </span>
+        </div>
+
+        <div>
+            <a href={url}>
+                <button>Go to {contentType}</button>
+            </a>
+        </div>
+    </div>
+</div>

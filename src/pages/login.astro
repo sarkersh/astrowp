@@ -1,0 +1,11 @@
+---
+import LoginForm from '../components/LoginForm.jsx'
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Login">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+        <LoginForm client:load />
+
+    </div>
+</Layout>

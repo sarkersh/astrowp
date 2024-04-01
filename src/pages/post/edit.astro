@@ -1,0 +1,115 @@
+
+---
+//export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import PostForm from "../../components/post/PostForm.jsx";
+
+// Access the URLSearchParams from the Astro.request object
+const url = new URL(Astro.request.url);
+const postId = url.searchParams.get('id');
+
+
+// Define your GraphQL endpoint from WordPress
+import {GRAPHQL_ENDPOINT} from "../../utils/graphql.js"
+
+
+// Define the GraphQL query
+const query = `
+  query GetSinglePost($id: ID!) {
+    post(id: $id, idType: DATABASE_ID) {
+      id
+      postTitle:title(format: RENDERED)   
+      publishDate:date
+      postId:databaseId
+      status
+      excerpt(format: RENDERED)
+      content(format: RENDERED)  
+      categories {
+          nodes {
+            name
+          }
+      }
+      author {
+        node {
+          id
+          firstName
+          email
+          name
+          nicename
+          nickname
+          username
+          lastName
+        }
+      }
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+    }
+  }
+`;
+
+
+let post = null;
+
+try{
+
+    // Fetch post data from WordPress
+    const response: Response = await fetch(GRAPHQL_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any additional headers like authorization if needed
+        },
+        body: JSON.stringify({
+            query,
+            variables: { id: postId },
+        }),
+    });
+
+    const { data, errors } = await response.json();
+
+    if (errors) {
+        console.error(errors);
+        // Handle errors
+    }
+
+// Extract the post data
+    post = data?.post;
+    //console.log('POST DATA :: ', post)
+
+}catch (e) {
+
+}
+
+
+---
+
+<Layout title="Edit Post">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden" >
+
+        {(post) ? (
+                <PostForm
+                        client:load
+                        postId={post.postId}
+                        postTitle={post.postTitle}
+                        publishDate={post.publishDate}
+                        status={post.status}
+                        excerpt={post.excerpt}
+                        content={post.content}
+                        action="Update"
+                />
+        ) : (
+                <div class="bg-red-300 p-2 rounded-md">
+
+                        <span class="font-bold">Post not found.</span> {/* Add error message here */}
+
+                </div>
+        )}
+
+    </div>
+</Layout>
+
+

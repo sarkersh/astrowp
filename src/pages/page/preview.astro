@@ -1,0 +1,115 @@
+
+---
+
+import Layout from '../../layouts/Layout.astro';
+
+// Access the URLSearchParams from the Astro.request object
+const url = new URL(Astro.request.url);
+const postId = url.searchParams.get('id');
+
+
+// Define your GraphQL endpoint from WordPress
+import {GRAPHQL_ENDPOINT} from "../../utils/graphql.js"
+
+// Define the GraphQL query
+const query = `
+  query GetSinglePage($id: ID!) {
+    page(id: $id, idType: DATABASE_ID) {
+      id
+      postTitle:title(format: RENDERED)   
+      publishDate:date
+      postId:databaseId
+      status      
+      content(format: RENDERED)
+      author {
+        node {
+          id
+          firstName
+          email
+          name
+          nicename
+          nickname
+          username
+          lastName
+        }
+      }
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+    }
+  }
+`;
+
+let post = null
+// Fetch post data from WordPress
+const response = await fetch(GRAPHQL_ENDPOINT, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        // Add any additional headers like authorization if needed
+    },
+    body: JSON.stringify({
+        query,
+        variables: { id: postId },
+    }),
+});
+
+const { data, errors } = await response.json();
+
+if (errors) {
+    console.error('ERROR :: ', errors);
+    // Handle errors
+}
+
+// Extract the post data
+post = data?.page;
+
+---
+
+<Layout title="Preview Page">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden" >
+
+        <div class="grid grid-cols-1 gap-7.5 sm:grid-cols-1 xl:grid-cols-1">
+            {post ? (
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="p-6">
+                    <h4 class="mb-3 text-xl font-semibold text-black dark:text-white">
+                        <a href="#">{post.postTitle}</a>
+                    </h4>
+
+                </div>
+
+                <div class="flex items-center gap-3 px-6 py-5">
+
+                    <div>
+                        <h4 class="font-medium text-black dark:text-white">
+                            {post.author.name || "Admin"}
+                        </h4>
+                        <p class="text-xs font-medium">{post.publishDate}</p>
+                    </div>
+                </div>
+
+
+
+                <div class="p-6">
+
+                    <p class="font-medium" set:html={post.content}>
+
+                    </p>
+                </div>
+
+
+            </div>
+            ) : (
+
+                    <p> Page not found ...</p>
+            )}
+
+        </div>
+
+    </div>
+</Layout>
+
+

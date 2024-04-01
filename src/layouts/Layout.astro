@@ -1,0 +1,100 @@
+---
+
+interface Props {
+	title: string;
+	description?: string,
+}
+// Import Tailwind CSS
+import 'tailwindcss/tailwind.css'
+import Header from '../components/Header.jsx';
+const {
+	title = "WP Content Manager",
+	description = "WP Content Manager",
+} = Astro.props;
+import { ViewTransitions } from "astro:transitions";
+import { fade } from "astro:transitions";
+const pageTitle = title || "AstroWPr"
+---
+
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="generator" content={Astro.generator} />
+	<title>{pageTitle}</title>
+	<meta name="description" content={description} />
+	<ViewTransitions />
+</head>
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-blue-900 min-h-screen text-white">
+		<div class="px-4 py-6">
+			<div class="flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5">
+				<a class="text-4xl text-center" href="/">
+					<button class="text-center text-amber-300 p-2">
+						ASTRO WP
+						<h1 class="text-xl font-bold mb-6 text-center ">---</h1>
+					</button>
+				</a>
+
+			</div>
+
+			<hr>
+
+			<div class="mt-6">
+				<h2 class="text-xl font-semibold mb-4">Dashboard</h2>
+			</div>
+			<nav class="mt-6">
+				<h2 class="text-xl font-semibold mb-4">Core Content</h2>
+				<ul>
+					<li class="mb-3"><a href="/pages" class="block p-2 hover:bg-blue-800">Pages</a></li>
+					<li class="mb-3"><a href="/posts" class="block p-2 hover:bg-blue-800">Posts</a></li>
+					<li class="mb-3"><a href="#" class="block p-2 hover:bg-blue-800">Comments</a></li>
+				</ul>
+			</nav>
+			<!-- Teams Section -->
+			<div class="mt-6">
+				<h2 class="text-xl font-semibold mb-4">Custom Content</h2>
+				<ul>
+					<li class="mb-2"><a href="/#" class="block p-2 hover:bg-blue-800">Events</a></li>
+					<li class="mb-2"><a href="/#" class="block p-2 hover:bg-blue-800">Articles</a></li>
+					<li class="mb-2"><a href="/#" class="block p-2 hover:bg-blue-800">Blogs</a></li>
+				</ul>
+			</div>
+		</div>
+	</aside>
+	<!-- Main Content -->
+	<main class="flex-1" >
+		<div class="p-6 pt-0">
+
+			{(title !== 'Login') ? (
+				<Header title={title} client:load />
+			) : (
+				<div class="bg-red-300 p-2 rounded-md"></div>
+			)}
+
+
+			<div class="flex justify-between items-center m-4">
+
+			</div>
+
+			<!-- Add your main content here -->
+			<div transition:animate={fade({ duration: '1s' })}>
+				<slot />
+			</div>
+
+
+		</div>
+	</main>
+</div>
+
+
+
+
+
+</body>
+</html>

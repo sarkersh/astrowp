@@ -1,0 +1,29 @@
+
+---
+
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import PostForm from "../../components/post/PostForm.jsx";
+
+---
+
+<Layout title="New Post">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+        <PostForm client:load
+                  postId=''
+                  postTitle=''
+                  publishDate=''
+                  status=''
+                  excerpt=''
+                  content=''
+                  action="Create"
+
+        />
+
+
+    </div>
+</Layout>
+
+

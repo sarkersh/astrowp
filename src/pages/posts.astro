@@ -1,0 +1,80 @@
+---
+export const prerender = false;
+import Layout from '../layouts/Layout.astro';
+import PostTop from "../components/PostTop.astro";
+import ContentItemList from "../components/ContentItemList.jsx";
+
+
+// Define your GraphQL endpoint from WordPress
+import {GRAPHQL_ENDPOINT as endpoint} from "../utils/graphql.js"
+
+// Define your GraphQL query
+const query = `
+query {
+    posts {
+    nodes {
+      id
+      postTitle:title
+      publishDate:date
+      postId:databaseId
+      status
+      categories {
+          nodes {
+            name
+          }
+      }
+      author {
+        node {
+          id
+          firstName
+          email
+          name
+          nicename
+          nickname
+          username
+          lastName
+        }
+      }
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+    }
+  }
+  }
+    
+`;
+// Fetch data from WordPress using the GraphQL query
+const data = await GetData(query, endpoint, {});
+const res = await data?.json()
+const posts = res.data?.posts?.nodes
+
+
+async function GetData(query: string, endpoint: string, variables: Record<string, any> = {}) {
+    console.log(endpoint, query)
+    const response:Response = await fetch(endpoint, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query, variables}),
+    })
+
+    return response
+}
+
+
+---
+
+<Layout title="Posts">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+        <PostTop title="Post" contentType="post"/>
+
+        <!--// {loading ? <p>Loading...</p> : null}-->
+        <!--{error ? <p>Error: {error.message}</p> : null}-->
+
+        <ContentItemList client:load initialItems={posts} contentType="post" />
+    </div>
+</Layout>

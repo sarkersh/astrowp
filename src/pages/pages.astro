@@ -1,0 +1,73 @@
+---
+
+import Layout from '../layouts/Layout.astro';
+// Import the React component
+import PostTop from "../components/PostTop.astro";
+import ContentItemList from "../components/ContentItemList.jsx";
+
+// Define your GraphQL endpoint from WordPress
+import {GRAPHQL_ENDPOINT as endpoint} from "../utils/graphql.js"
+
+
+// Define your GraphQL query
+const query = `
+query {
+    pages {
+    nodes {
+      id
+      postTitle:title
+      publishDate:date
+      postId:databaseId
+      status
+      author {
+        node {
+          id
+          firstName
+          email
+          name
+          nicename
+          nickname
+          username
+          lastName
+        }
+      }
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+    }
+  }
+  }
+    
+`;
+// Fetch data from WordPress using the GraphQL query
+//const data = await request(endpoint, query);
+const data = await GetData(query, endpoint, {});
+const res = await data?.json()
+//console.log(data, res.data?.pages?.nodes)
+const posts = res.data?.pages?.nodes
+
+
+async function GetData(query: string, endpoint: string, variables: Record<string, any> = {}) {
+    console.log(endpoint, query)
+    const response:Response = await fetch(endpoint, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query, variables}),
+    })
+    //return response?.json()
+    return response
+}
+
+---
+
+<Layout title="Pages">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+        <PostTop title="Page" contentType="page"/>
+        <ContentItemList client:load initialItems={posts} contentType="page" />
+    </div>
+</Layout>
