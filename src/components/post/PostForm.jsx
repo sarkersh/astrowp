@@ -211,7 +211,7 @@ export default function PostForm({ postId,postTitle, publishDate, status, excerp
 
                     <div>
                         <Editor
-                            apiKey='1a8p2owis44844dppxn3johrwbtoeqnbe2zq1g9m5um3j2tc'
+                            apiKey='adgspzxlx1iwm8te89ed52967fy104fl2zc01d4xq7vr0mxr'
                             onInit={(evt, editor) => (editorRef.current = editor)}
                             init={{
                                 plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate  mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
